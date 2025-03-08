@@ -7,11 +7,27 @@ import java.util.*;
 
 @Data
 public class NFA {
-    State start;
-    State accept;
+    private State start;
+    private State accept;
 
-    NFA(State start, State accept) {
+    public NFA(State start, State accept) {
         this.start = start;
+        this.accept = accept;
+    }
+
+    public State getStart() {
+        return start;
+    }
+
+    public void setStart(State start) {
+        this.start = start;
+    }
+
+    public State getAccept() {
+        return accept;
+    }
+
+    public void setAccept(State accept) {
         this.accept = accept;
     }
 

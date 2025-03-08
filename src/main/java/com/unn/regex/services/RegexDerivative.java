@@ -47,4 +47,29 @@ public class RegexDerivative {
         if (regex.contains("?")) return true;
         return false;
     }
+
+    // Проверка, содержит ли регулярное выражение пустую строку
+    public boolean nullable(String regex) {
+        if (regex.equals("ε")) {
+            return true;
+        }
+        if (regex.equals("∅") || regex.isEmpty()) {
+            return false;
+        }
+        if (regex.length() == 1) {
+            return false;
+        }
+        if (regex.contains("|")) {
+            String[] parts = regex.split("\\|");
+            return nullable(parts[0]) || nullable(parts[1]);
+        }
+        if (regex.contains("·")) {
+            String[] parts = regex.split("·");
+            return nullable(parts[0]) && nullable(parts[1]);
+        }
+        if (regex.endsWith("*")) {
+            return true;
+        }
+        return false;
+    }
 }

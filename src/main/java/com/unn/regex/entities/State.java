@@ -7,9 +7,26 @@ import java.util.*;
 
 @Data
 public class State {
+    private boolean isAccept = false;
     private Integer id; // Идентификатор состояния
     private String regex; // Регулярное выражение, соответствующее состоянию
-    private Map<Character, Set<State>> transitions; // Переходы
+    private Map<Character, Set<State>> transitions = new HashMap<>();; // Переходы
+
+    public State() {
+
+    }
+
+    public State(int i) {
+        this.id = i;
+    }
+
+    public boolean isAccept() {
+        return isAccept;
+    }
+
+    public void setAccept(boolean accept) {
+        isAccept = accept;
+    }
 
     public Map<Character, Set<State>> getTransitions() {
         return transitions;
@@ -26,14 +43,13 @@ public class State {
     public State(int id, String regex) {
         this.id = id;
         this.regex = regex;
-        this.transitions = new HashMap<>();
     }
 
-    void addTransition(char symbol, State state) {
+    public void addTransition(char symbol, State state) {
         transitions.computeIfAbsent(symbol, k -> new HashSet<>()).add(state);
     }
 
-    Set<State> getTransitions(char symbol) {
+    public Set<State> getTransitions(char symbol) {
         return transitions.getOrDefault(symbol, new HashSet<>());
     }
 

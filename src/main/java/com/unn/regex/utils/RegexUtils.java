@@ -56,12 +56,28 @@ public class RegexUtils {
             return regex;
         }
 
+        // Упрощение для группировки
+        if (regex.startsWith("(") && regex.endsWith(")")) {
+            String inner = regex.substring(1, regex.length() - 1);
+            String simplifiedInner = simplify(inner);
+            if (!simplifiedInner.contains("|") && !simplifiedInner.contains("·")) {
+                return simplifiedInner; // (a) → a
+            }
+            return "(" + simplifiedInner + ")";
+        }
+
         // Упрощение для альтернатив
         if (regex.contains("|")) {
             String[] parts = regex.split("\\|");
             Set<String> uniqueParts = new HashSet<>();
             for (String part : parts) {
-                uniqueParts.add(simplify(part));
+                String simplifiedPart = simplify(part);
+                if (!simplifiedPart.equals("∅")) { // Игнорируем ∅ в альтернативах
+                    uniqueParts.add(simplifiedPart);
+                }
+            }
+            if (uniqueParts.isEmpty()) {
+                return "∅"; // Все части были ∅
             }
             if (uniqueParts.size() == 1) {
                 return uniqueParts.iterator().next();
@@ -75,6 +91,9 @@ public class RegexUtils {
             StringBuilder simplified = new StringBuilder();
             for (String part : parts) {
                 String simplifiedPart = simplify(part);
+                if (simplifiedPart.equals("∅")) {
+                    return "∅"; // Если хотя бы одна часть ∅, вся конкатенация ∅
+                }
                 if (!simplifiedPart.equals("ε")) {
                     simplified.append(simplifiedPart);
                 }
@@ -86,21 +105,16 @@ public class RegexUtils {
         if (regex.endsWith("*")) {
             String base = regex.substring(0, regex.length() - 1);
             String simplifiedBase = simplify(base);
+            if (simplifiedBase.equals("∅") || simplifiedBase.equals("ε")) {
+                return "ε"; // ∅* = ε, ε* = ε
+            }
             if (simplifiedBase.endsWith("*")) {
                 return simplifiedBase; // (a*)* → a*
             }
             return simplifiedBase + "*";
         }
 
-        // Упрощение для группировки
-        if (regex.startsWith("(") && regex.endsWith(")")) {
-            String inner = regex.substring(1, regex.length() - 1);
-            String simplifiedInner = simplify(inner);
-            if (!simplifiedInner.contains("|") && !simplifiedInner.contains("·")) {
-                return simplifiedInner; // (a) → a
-            }
-            return "(" + simplifiedInner + ")";
-        }
+
 
         return regex;
     }

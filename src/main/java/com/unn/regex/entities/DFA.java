@@ -28,7 +28,7 @@ public class DFA {
     }
 
     // Вывод ДКА в понятном виде
-    void printDFA() {
+    public void printDFA() {
         System.out.println("ДКА:");
         System.out.println("Начальное состояние: " + startState);
         System.out.println("Принимающие состояния: " + acceptStates);
