@@ -5,12 +5,13 @@ import com.unn.regex.utils.RegexUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.io.IOException;
 import java.util.List;
 
 @SpringBootApplication
 public class VkrApplication {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         var ndfsa = new FiniteStateAutomata(List.of("S0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "qf"),
                 List.of("1", "0", "+", "2"),
                 List.of("qf"),
@@ -52,25 +53,25 @@ public class VkrApplication {
         dka.BuildDeltaDKAutomate(ndfsa);
         dka.DebugAuto();
         System.out.println("Enter line to execute :");
-        System.out.println(dka);
+        dka.Execute(String.valueOf(System.in.read()));
 
-        String[] testCases = {
-                "a", "ε", "∅",
-                "a**", "a++", "a??",
-                "(a*)*", "(a+)+", "(a?)?*",
-                "a|a", "a|b", "a|ε", "ε|a", "a|∅", "∅|a",
-                "a·ε", "ε·a", "a·∅", "∅·a", "a·b",
-                "a*", "(a|b)*", "(a*)*", "(a+)*",
-                "(a)", "(a|b)", "((a))", "(a|b)|c",
-                "a*·b*", "(a|b)·(c|d)", "(a|ε)·b", "(a|b)*·c",
-                "", "∅|∅", "ε|ε", "a|b|c|a", "(a|b)|(b|a)",
-                "a*b*", "(a|b)*c", "a*(b|c)*", "(a|ε)(b|ε)"
-        };
-
-        for (String testCase : testCases) {
-            String simplified = RegexUtils.simplify(testCase);
-            System.out.println("Упрощение '" + testCase + "' → '" + simplified + "'");
-        }
+//        String[] testCases = {
+//                "a", "ε", "∅",
+//                "a**", "a++", "a??",
+//                "(a*)*", "(a+)+", "(a?)?*",
+//                "a|a", "a|b", "a|ε", "ε|a", "a|∅", "∅|a",
+//                "a·ε", "ε·a", "a·∅", "∅·a", "a·b",
+//                "a*", "(a|b)*", "(a*)*", "(a+)*",
+//                "(a)", "(a|b)", "((a))", "(a|b)|c",
+//                "a*·b*", "(a|b)·(c|d)", "(a|ε)·b", "(a|b)*·c",
+//                "", "∅|∅", "ε|ε", "a|b|c|a", "(a|b)|(b|a)",
+//                "a*b*", "(a|b)*c", "a*(b|c)*", "(a|ε)(b|ε)"
+//        };
+//
+//        for (String testCase : testCases) {
+//            String simplified = RegexUtils.simplify(testCase);
+//            System.out.println("Упрощение '" + testCase + "' → '" + simplified + "'");
+//        }
         SpringApplication.run(VkrApplication.class, args);
 
 

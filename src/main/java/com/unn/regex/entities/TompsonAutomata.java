@@ -76,9 +76,10 @@ public class TompsonAutomata {
         var NextStates = new ArrayList<Symbol>();
         boolean flag = false;
         for (var d : delta) {
-            if (Objects.equals(d.LHSQ, Symbol.stringToSymbol(currState)) && Objects.equals(d.LHSS, Symbol.stringToSymbol(term))) {
+            if (d.LHSQ == new Symbol(currState) && d.LHSS == new Symbol(currState)) {
                 NextStates.add(new Symbol(d.RHSQ.get(0).ToString()));
                 flag = true;
+                break;
             }
         }
         if (flag) return NextStates;
