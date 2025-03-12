@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Scanner;
 
 @SpringBootApplication
 public class VkrApplication {
@@ -53,7 +54,9 @@ public class VkrApplication {
         dka.BuildDeltaDKAutomate(ndfsa);
         dka.DebugAuto();
         System.out.println("Enter line to execute :");
-        dka.Execute(String.valueOf(System.in.read()));
+        Scanner scanner = new Scanner(System.in);
+        String sin = scanner.nextLine();
+        dka.Execute(sin);
 
 //        String[] testCases = {
 //                "a", "ε", "∅",

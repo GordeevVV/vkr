@@ -66,7 +66,9 @@ public class TompsonAutomata {
             nextStates = (ArrayList<Symbol>) FromStateToStates(s.getSymbol(), term);
             if (nextStates != null)
                 for (var st : nextStates) {
-                    if (!ReachableStates.contains(st)) ReachableStates.add(st);
+                    if (!ReachableStates.contains(st)) {
+                        ReachableStates.add(st);
+                    }
                 }
         }
         return ReachableStates;
@@ -76,7 +78,7 @@ public class TompsonAutomata {
         var NextStates = new ArrayList<Symbol>();
         boolean flag = false;
         for (var d : delta) {
-            if (d.LHSQ == new Symbol(currState) && d.LHSS == new Symbol(currState)) {
+            if (d.LHSQ == new Symbol(currState) && d.LHSS == new Symbol(term)) {
                 NextStates.add(new Symbol(d.RHSQ.get(0).ToString()));
                 flag = true;
                 break;
@@ -105,10 +107,10 @@ public class TompsonAutomata {
                     queue.add(newStates);
                     config.add(Symbol.stringToSymbol(setName(epsClosure(newStates))));
                 }
-                if (!newStates.isEmpty() && (!Objects.equals(setName(curStates), setName(epsClosure(newStates))))) {
-                        DeltaQSigma deltaVar = new DeltaQSigma(Symbol.stringToSymbol(setName(curStates)),
-                                Symbol.stringToSymbol(a.getSymbol()), List.of(Symbol.stringToSymbol(setName(epsClosure(newStates)))));
-                        deltaD.add(deltaVar);
+                if (!newStates.isEmpty() && setName(curStates) != setName(epsClosure(newStates))) {
+                    DeltaQSigma deltaVar = new DeltaQSigma(Symbol.stringToSymbol(setName(curStates)),
+                            Symbol.stringToSymbol(a.getSymbol()), List.of(Symbol.stringToSymbol(setName(epsClosure(newStates)))));
+                    deltaD.add(deltaVar);
                 }
             }
         }
@@ -119,7 +121,7 @@ public class TompsonAutomata {
         this.delta = ndka.delta;
         buildWithQueue(ndka.Q0);
         this.Q = config;
-        this.Q0 = this.Q.get(0);
+        this.Q0 = Symbol.stringToSymbol(this.Q.get(0).ToString());
         this.delta = deltaD;
         this.F = getF(config, ndka.F);
     }
@@ -142,7 +144,11 @@ public class TompsonAutomata {
             return "";
         }
         for (var sym : list) {
-            line += sym.getSymbol();
+            if (line == null) {
+                line = sym.getSymbol();
+            } else {
+                line += sym.getSymbol();
+            }
         }
 
         return line;
@@ -150,30 +156,30 @@ public class TompsonAutomata {
 
 
     public void Debug(String step, String line) {
-        System.out.println(step + ": ");
+        System.out.print(step + ": ");
         System.out.println(line);
     }
 
     public void Debug(String step, List<Symbol> list) {
-        System.out.println(step + ": ");
+        System.out.print(step + ": ");
         if (list == null) {
-            System.out.println("null");
+            System.out.print("null");
             return;
         }
         for (int i = 0; i < list.size(); i++)
-            if (list.get(i) != null) System.out.println(list.get(i).ToString() + " ");
-        System.out.println("\n");
+            if (list.get(i) != null && list.get(i).getSymbol() != null) System.out.print(list.get(i).ToString() + " ");
+        System.out.print("\n");
     }
 
     public void Debug(List<Symbol> list) {
-        System.out.println("{ ");
+        System.out.print("{ ");
         if (list == null) {
-            System.out.println("null");
+            System.out.print("null");
             return;
         }
         for (int i = 0; i < list.size(); i++)
-            System.out.println(list.get(i).ToString() + " ");
-        System.out.println(" }\n");
+            System.out.print(list.get(i).ToString() + " ");
+        System.out.print(" }\n");
     }
 
     public void DebugAuto() {
