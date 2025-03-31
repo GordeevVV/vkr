@@ -1,15 +1,19 @@
 package com.unn.regex.entities;
 
-import java.util.*;
+import org.springframework.stereotype.Service;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
 public class TompsonAutomata {
     public List<Symbol> Q = null; ///< множество состояний
     public List<Symbol> sigma = null; ///< множество алфавит
     public List<DeltaQSigma> delta = null;  ///< множество правил перехода
     public Symbol Q0 = null; ///< начальное состояние
     public List<Symbol> F = null; ///< множество конечных состояний
-    private List<Symbol> config = new ArrayList<>();
-    private List<DeltaQSigma> deltaD = new ArrayList<DeltaQSigma>(); ///< правила детерминированного автомата
+    public List<Symbol> config = new ArrayList<>();
+    public List<DeltaQSigma> deltaD = new ArrayList<>(); ///< правила детерминированного автомата
 
     public TompsonAutomata() {
     }
@@ -99,17 +103,17 @@ public class TompsonAutomata {
             queue.remove(0);
             for (var a : sigma) {
                 newStates = move(curStates, a.getSymbol());
-                if (!config.contains(Symbol.stringToSymbol(setName(epsClosure(newStates))))) {
+                if (!config.contains(Symbol.stringToSymbol(setNameSymbol(epsClosure(newStates))))) {
                     if (isStart) {
-                        config.add(Symbol.stringToSymbol(setName(curStates)));
+                        config.add(Symbol.stringToSymbol(setNameSymbol(curStates)));
                         isStart = false;
                     }
                     queue.add(newStates);
-                    config.add(Symbol.stringToSymbol(setName(epsClosure(newStates))));
+                    config.add(Symbol.stringToSymbol(setNameSymbol(epsClosure(newStates))));
                 }
-                if (!newStates.isEmpty() && setName(curStates) != setName(epsClosure(newStates))) {
-                    DeltaQSigma deltaVar = new DeltaQSigma(Symbol.stringToSymbol(setName(curStates)),
-                            Symbol.stringToSymbol(a.getSymbol()), List.of(Symbol.stringToSymbol(setName(epsClosure(newStates)))));
+                if (!newStates.isEmpty() && setNameSymbol(curStates) != setNameSymbol(epsClosure(newStates))) {
+                    DeltaQSigma deltaVar = new DeltaQSigma(Symbol.stringToSymbol(setNameSymbol(curStates)),
+                            Symbol.stringToSymbol(a.getSymbol()), List.of(Symbol.stringToSymbol(setNameSymbol(epsClosure(newStates)))));
                     deltaD.add(deltaVar);
                 }
             }
@@ -123,10 +127,10 @@ public class TompsonAutomata {
         this.Q = config;
         this.Q0 = Symbol.stringToSymbol(this.Q.get(0).ToString());
         this.delta = deltaD;
-        this.F = getF(config, ndka.F);
+        this.F = getF(ndka.F);
     }
 
-    private List<Symbol> getF(List<Symbol> config, List<Symbol> F) {
+    private List<Symbol> getF(List<Symbol> F) {
         var F_ = new ArrayList<Symbol>();
         for (var f : F) {
             for (var name : this.config) {
@@ -138,7 +142,7 @@ public class TompsonAutomata {
         return F_;
     }
 
-    private String setName(List<Symbol> list) {
+    private String setNameSymbol(List<Symbol> list) {
         String line = null;
         if (list == null) {
             return "";
@@ -193,4 +197,5 @@ public class TompsonAutomata {
             d.toString();
         }
     }
+
 }
