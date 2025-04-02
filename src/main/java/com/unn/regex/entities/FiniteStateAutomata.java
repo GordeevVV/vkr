@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Objects;
 
 public class FiniteStateAutomata extends TompsonAutomata {
-    public FiniteStateAutomata(List<Symbol> Q, List<Symbol> Sigma, List<Symbol> F, String q0) {
-        super(Q, Sigma, F, Symbol.stringToSymbol(q0));
-    }
+//    public FiniteStateAutomata(List<Symbol> Q, List<Symbol> Sigma, List<Symbol> F, String q0) {
+//        super(Q, Sigma, F, Symbol.stringToSymbol(q0));
+//    }
 
-    public FiniteStateAutomata(List<String> Q, List<String> Sigma, List<String> F, String q0, String txt) {
+    public FiniteStateAutomata(List<String> Q, List<String> Sigma, List<String> F, String q0) {
         super(Q.stream().map(Symbol::new).toList(), Sigma.stream().map(Symbol::new).toList(),
                 F.stream().map(Symbol::new).toList(), Symbol.stringToSymbol(q0));
     }

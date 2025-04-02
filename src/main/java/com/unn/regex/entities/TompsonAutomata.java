@@ -1,11 +1,10 @@
 package com.unn.regex.entities;
 
-import org.springframework.stereotype.Service;
+import com.unn.regex.dto.Rule;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
-@Service
 public class TompsonAutomata {
     public List<Symbol> Q = null; ///< множество состояний
     public List<Symbol> sigma = null; ///< множество алфавит
@@ -29,6 +28,13 @@ public class TompsonAutomata {
     public void AddRule(String state, String term, String nextState) {
         this.delta.add(new DeltaQSigma(Symbol.stringToSymbol(state),
                 Symbol.stringToSymbol(term), List.of(new Symbol(nextState))));
+    }
+
+    public void addRules(List<Rule> rules){
+        for (Rule rule:rules) {
+            this.delta.add(new DeltaQSigma(Symbol.stringToSymbol(rule.getState()),
+                    Symbol.stringToSymbol(rule.getTerm()), List.of(new Symbol(rule.getNextState()))));
+        }
     }
 
 

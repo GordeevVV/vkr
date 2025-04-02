@@ -1,46 +1,49 @@
 package com.unn.regex.entities;
 
-import org.springframework.stereotype.Service;
+import com.unn.regex.dto.Rule;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Service
+
 public class TompsonShuffle {
-    public List<Symbol> Q = null; ///< множество состояний
     public List<Symbol> sigma = null; ///< множество алфавит
-    public List<DeltaQSigma> delta = null;  ///< множество правил перехода
-    public Symbol Q0 = null; ///< начальное состояние
-    public List<Symbol> F = null;
     public List<Symbol> config = new ArrayList<>();
-    public List<DeltaQSigma> deltaD = new ArrayList<>();
 
     List<DeltaQSigma> n1Delta = new ArrayList<>();
 
     List<Symbol> n1FinalStates = new ArrayList<>();
-    Set<Symbol> n1Alphabet = new HashSet<>();
+    List<Symbol> n1Alphabet = new ArrayList<>();
 
     List<DeltaQSigma> n2Delta = new ArrayList<>();
 
     List<Symbol> n2FinalStates = new ArrayList<>();
-    Set<Symbol> n2Alphabet = new HashSet<>();
+    List<Symbol> n2Alphabet = new ArrayList<>();
 
-    List<Symbol> finalStates = new ArrayList<>();///< множество конечных состояний
+    List<Symbol> deltaD = new ArrayList<>();///< множество конечных состояний
 
     public TompsonShuffle() {
     }
 
-    public TompsonShuffle(List<Symbol> Q, List<Symbol> Sigma, List<Symbol> F, Symbol q0) {
-        this.Q = Q;
-        this.sigma = Sigma;
-        this.Q0 = q0;
-        this.F = F;
-        this.delta = new ArrayList<>();
+    public TompsonShuffle(List<Symbol> sigma,
+                          List<Symbol> n1FinalStates, List<Symbol> n1Alphabet,
+                          List<Symbol> n2FinalStates, List<Symbol> n2Alphabet) {
+        this.sigma = sigma;
+        this.n1FinalStates = n1FinalStates;
+        this.n1Alphabet = n1Alphabet;
+        this.n2FinalStates = n2FinalStates;
+        this.n2Alphabet = n2Alphabet;
     }
 
-    public void AddRule(String state, String term, String nextState) {
-        this.delta.add(new DeltaQSigma(Symbol.stringToSymbol(state),
-                Symbol.stringToSymbol(term), List.of(new Symbol(nextState))));
+    public void addRules(List<Rule> rules1, List<Rule> rules2) {
+        for (Rule rule : rules1) {
+            this.n1Delta.add(new DeltaQSigma(Symbol.stringToSymbol(rule.getState()),
+                    Symbol.stringToSymbol(rule.getTerm()), List.of(new Symbol(rule.getNextState()))));
+        }
+        for (Rule rule : rules2) {
+            this.n2Delta.add(new DeltaQSigma(Symbol.stringToSymbol(rule.getState()),
+                    Symbol.stringToSymbol(rule.getTerm()), List.of(new Symbol(rule.getNextState()))));
+        }
     }
 
     public List<Symbol> buildShuffleDFA(Symbol n1Start, Symbol n2Start) {
@@ -104,16 +107,6 @@ public class TompsonShuffle {
                     queue.add(newStates);
                     config.add(newStateSymbol);
                 }
-
-                // Добавление перехода
-                if (!newStates.isEmpty()) {
-                    DeltaQSigma deltaVar = new DeltaQSigma(
-                            Symbol.stringToSymbol(setName(currStatePairs)),
-                            Symbol.stringToSymbol(a.getSymbol()),
-                            List.of(newStateSymbol)
-                    );
-                    deltaD.add(deltaVar);
-                }
             }
         }
 
@@ -122,12 +115,12 @@ public class TompsonShuffle {
             List<StatePair> pairs = parseState(state);
             for (StatePair pair : pairs) {
                 if (n1FinalStates.contains(pair.q1) && n2FinalStates.contains(pair.q2)) {
-                    finalStates.add(state);
+                    deltaD.add(state);
                     break;
                 }
             }
         }
-        return finalStates;
+        return deltaD;
     }
 
     // Вспомогательные методы
